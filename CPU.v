@@ -2,13 +2,34 @@ module CPU
 (
     clk_i, 
     rst_i,
-    start_i
+    start_i,
+	
+	mem_data_i, 
+	mem_ack_i, 	
+	mem_data_o, 
+	mem_addr_o, 	
+	mem_enable_o, 
+	mem_write_o
 );
 
 // Ports
 input               clk_i;
 input               rst_i;
 input               start_i;
+
+//
+// to Data Memory interface		
+//
+input	[256-1:0]	mem_data_i; 
+input				mem_ack_i; 	
+output	[256-1:0]	mem_data_o; 
+output	[32-1:0]	mem_addr_o; 	
+output				mem_enable_o; 
+output				mem_write_o; 
+
+//
+// add your project1 here!
+//
 
 wire [31:0] instruction;
 wire [31:0] inst_addr;
@@ -37,13 +58,39 @@ Instruction_Memory Instruction_Memory(
 
 Data_Memory Data_Memory(
 	.clk_i		(clk_i),
-    .addr_i		(EXMEM_Reg.ALUresult_o),
-    .WrData_i	(EXMEM_Reg.memWriteData_o),
-    .MemWr_i	(EXMEM_Reg.memWrite_o),
-    .MemRd_i	(EXMEM_Reg.memRead_o),
+    .addr_i		(),
+    .WrData_i	(),
+    .MemWr_i	(),
+    .MemRd_i	(),
+	
     .RdData_o	()
 );
 
+//data cache
+dcache_top dcache
+(
+    // System clock, reset and stall
+	.clk_i(clk_i), 
+	.rst_i(rst_i),
+	
+	// to Data Memory interface		
+	.mem_data_i(mem_data_i), 
+	.mem_ack_i(mem_ack_i), 	
+	
+	.mem_data_o(mem_data_o), 
+	.mem_addr_o(mem_addr_o), 	
+	.mem_enable_o(mem_enable_o), 
+	.mem_write_o(mem_write_o), 
+	
+	// to CPU interface	
+	.p1_data_i(EXMEM_Reg.memWriteData_o), 
+	.p1_addr_i(EXMEM_Reg.ALUresult_o), 	
+	.p1_MemRead_i(EXMEM_Reg.memRead_o), 
+	.p1_MemWrite_i(EXMEM_Reg.memWrite_o), 
+	
+	.p1_data_o(), 
+	.p1_stall_o()
+);
 
 Adder Add_PC(
     .data1_in   (inst_addr),
@@ -271,7 +318,7 @@ MEMWB_Reg MEMWB_Reg(
 	.clk_i			(clk_i),
 	.writeBack_i	(EXMEM_Reg.writeBack_o),
 	.memtoReg_i		(EXMEM_Reg.memtoReg_o),
-	.memReadData_i	(Data_Memory.RdData_o),
+	.memReadData_i	(dcache.p1_data_o),
 	.ALUresult_i	(EXMEM_Reg.ALUresult_o),
 	.regDstAddr_i	(EXMEM_Reg.regDstAddr_o),
 	
@@ -305,6 +352,7 @@ FW FW
 	.ForwardA_o	(),
 	.ForwardB_o	()
 );
+
 
 endmodule
 
