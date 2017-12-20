@@ -11,25 +11,25 @@ module Data_Memory
 );
 
 // Interface
-input				    clk_i;
-input				    rst_i;
+input				clk_i;
+input				rst_i;
 input	[31:0]		addr_i;
 input	[255:0]		data_i;
-input				    enable_i;
-input				    write_i;
-output				  ack_o;
-output	[255:0] data_o;
+input				enable_i;
+input				write_i;
+output				ack_o;
+output	[255:0] 	data_o;
 
 
 // Memory
 reg		[255:0]		memory 			[0:511];	//16KB
-reg		[3:0]		  count;
-wire				    ack;
+reg		[3:0]		count;
+wire				ack;
 reg					write_reg;
 reg		[255:0]		data;
 wire	[26:0]		addr;
 
-parameter STATE_IDLE			= 1'h0,
+parameter	STATE_IDLE			= 1'h0,
 			STATE_WAIT			= 1'h1;			
 
 reg		[1:0]		state;
