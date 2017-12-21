@@ -6,6 +6,7 @@ module MEMWB_Reg
 	memReadData_i,
 	ALUresult_i,
 	regDstAddr_i,
+	stall_i,
 	
 	writeBack_o,
 	memtoReg_o,
@@ -21,6 +22,7 @@ input				memtoReg_i;
 input	[31:0]		memReadData_i;
 input	[31:0]		ALUresult_i;
 input	[4:0]		regDstAddr_i;
+input				stall_i;
 
 output				writeBack_o;
 output				memtoReg_o;
@@ -44,15 +46,18 @@ assign memReadData_o = memReadData;
 assign ALUresult_o = ALUresult;
 assign regDstAddr_o = regDstAddr;
 
-// Write Data   
+// Write Data 
 always@(posedge clk_i) begin
-	
-	writeBack <= writeBack_i;
-	memtoReg <= memtoReg_i;
-	memReadData <= memReadData_i;
-	ALUresult <= ALUresult_i;
-	regDstAddr <= regDstAddr_i;
-	
+	if(stall_i) begin
+		
+	end
+	else begin
+		writeBack <= writeBack_i;
+		memtoReg <= memtoReg_i;
+		memReadData <= memReadData_i;
+		ALUresult <= ALUresult_i;
+		regDstAddr <= regDstAddr_i;	
+	end
 end
    
 endmodule 

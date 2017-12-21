@@ -8,6 +8,7 @@ module EXMEM_Reg
 	ALUresult_i,
 	memWriteData_i,
 	regDstAddr_i,
+	stall_i,
 	
 	writeBack_o,
 	memtoReg_o,
@@ -27,6 +28,7 @@ input				memWrite_i;
 input	[31:0]		ALUresult_i;
 input	[31:0]		memWriteData_i;
 input	[4:0]		regDstAddr_i;
+input				stall_i;
 
 output				writeBack_o;
 output				memtoReg_o;
@@ -58,15 +60,18 @@ assign regDstAddr_o = regDstAddr;
 
 // Write Data   
 always@(posedge clk_i) begin
-	
-	writeBack <= writeBack_i;
-	memtoReg <= memtoReg_i;
-	memRead <= memRead_i;
-	memWrite <= memWrite_i;
-	ALUresult <= ALUresult_i;
-	memWriteData <= memWriteData_i;
-	regDstAddr <= regDstAddr_i;
-	
+	if(stall_i) begin
+		
+	end
+	else begin
+		writeBack <= writeBack_i;
+		memtoReg <= memtoReg_i;
+		memRead <= memRead_i;
+		memWrite <= memWrite_i;
+		ALUresult <= ALUresult_i;
+		memWriteData <= memWriteData_i;
+		regDstAddr <= regDstAddr_i;	
+	end
 end
    
 endmodule 

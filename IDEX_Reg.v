@@ -15,6 +15,8 @@ module IDEX_Reg
 	instr25_21_i,
 	instr20_16_i,
 	instr15_11_i,
+	stall_i,
+
 	writeBack_o,
 	memtoReg_o,
 	memRead_o,
@@ -39,30 +41,31 @@ input			memtoReg_i;
 input			memRead_i;
 input			memWrite_i;
 input			ALUSrc_i;
-input	[1:0]		ALUOp_i;
+input	[1:0]	ALUOp_i;
 input			regDst_i;
-input	[31:0]		nextInstrAddr_i;
-input	[31:0]		reg1Data_i;
-input	[31:0]		reg2Data_i;
-input	[31:0]		signExtendResult_i;
-input	[4:0]		instr25_21_i;
-input	[4:0]		instr20_16_i;
-input	[4:0]		instr15_11_i;
+input	[31:0]	nextInstrAddr_i;
+input	[31:0]	reg1Data_i;
+input	[31:0]	reg2Data_i;
+input	[31:0]	signExtendResult_i;
+input	[4:0]	instr25_21_i;
+input	[4:0]	instr20_16_i;
+input	[4:0]	instr15_11_i;
+input			stall_i;
 
 output			writeBack_o;
 output			memtoReg_o;
 output			memRead_o;
 output			memWrite_o;
 output			ALUSrc_o;
-output	[1:0]		ALUOp_o;
+output	[1:0]	ALUOp_o;
 output			regDst_o;
-output	[31:0]		nextInstrAddr_o;
-output	[31:0]		reg1Data_o;
-output	[31:0]		reg2Data_o;
-output	[31:0]		signExtendResult_o;
-output	[4:0]		instr25_21_o;
-output	[4:0]		instr20_16_o;
-output	[4:0]		instr15_11_o;
+output	[31:0]	nextInstrAddr_o;
+output	[31:0]	reg1Data_o;
+output	[31:0]	reg2Data_o;
+output	[31:0]	signExtendResult_o;
+output	[4:0]	instr25_21_o;
+output	[4:0]	instr20_16_o;
+output	[4:0]	instr15_11_o;
 
 // Register File
 
@@ -71,15 +74,15 @@ reg			memtoReg;
 reg			memRead;
 reg			memWrite;
 reg			ALUSrc;
-reg	[1:0]		ALUOp;
+reg	[1:0]	ALUOp;
 reg			regDst;
-reg	[31:0]		nextInstrAddr;
-reg	[31:0]		reg1Data;
-reg	[31:0]		reg2Data;
-reg	[31:0]		signExtendResult;
-reg	[4:0]		instr25_21;
-reg	[4:0]		instr20_16;
-reg	[4:0]		instr15_11;
+reg	[31:0]	nextInstrAddr;
+reg	[31:0]	reg1Data;
+reg	[31:0]	reg2Data;
+reg	[31:0]	signExtendResult;
+reg	[4:0]	instr25_21;
+reg	[4:0]	instr20_16;
+reg	[4:0]	instr15_11;
 
 // Read Data	  
 
@@ -100,21 +103,25 @@ assign instr15_11_o = instr15_11;
 
 // Write Data   
 always@(posedge clk_i) begin
-	
-	writeBack <= writeBack_i;
-	memtoReg <= memtoReg_i;
-	memRead <= memRead_i;
-	memWrite <= memWrite_i;
-	ALUSrc <= ALUSrc_i;
-	ALUOp <= ALUOp_i;
-	regDst <= regDst_i;
-	nextInstrAddr <= nextInstrAddr_i;
-	reg1Data <= reg1Data_i;
-	reg2Data <= reg2Data_i;
-	signExtendResult <= signExtendResult_i;
-	instr25_21 <= instr25_21_i;
-	instr20_16 <= instr20_16_i;
-	instr15_11 <= instr15_11_i;
+	if(stall_i) begin
+		
+	end
+	else begin
+		writeBack <= writeBack_i;
+		memtoReg <= memtoReg_i;
+		memRead <= memRead_i;
+		memWrite <= memWrite_i;
+		ALUSrc <= ALUSrc_i;
+		ALUOp <= ALUOp_i;
+		regDst <= regDst_i;
+		nextInstrAddr <= nextInstrAddr_i;
+		reg1Data <= reg1Data_i;
+		reg2Data <= reg2Data_i;
+		signExtendResult <= signExtendResult_i;
+		instr25_21 <= instr25_21_i;
+		instr20_16 <= instr20_16_i;
+		instr15_11 <= instr15_11_i;	
+	end
 	
 end
    

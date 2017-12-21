@@ -5,6 +5,8 @@ module IFID_Reg
 	flush_i,		//for taken brench stall -> need to clean register value
 	nextInstrAddr_i,
     instr_i,
+    stall_i,
+
 	nextInstrAddr_o, 
     instr_o
 );
@@ -15,6 +17,7 @@ input               stallHold_i;
 input				flush_i;
 input   [31:0]      nextInstrAddr_i;
 input	[31:0]		instr_i;
+input				stall_i;
 output  [31:0]      nextInstrAddr_o; 
 output  [31:0]      instr_o;
 
@@ -28,7 +31,10 @@ assign  instr_o = instr;
 
 // Write Data   
 always@(posedge clk_i) begin
-	if (stallHold_i) begin 
+	if (stall_i) begin
+		
+	end
+	else if (stallHold_i) begin
 		//do exactly nothing to maintain original value
 	end
 	else if (flush_i) begin

@@ -44,6 +44,7 @@ PC PC(
     .rst_i      (rst_i),
     .start_i    (start_i),
     .pc_i       (MUX2.data_o),
+    ,stall_i	(dcache.p1_stall_o),
     .stallHold_i(HD.stallHold_o),
 	
 	.pc_o       (inst_addr)
@@ -55,16 +56,19 @@ Instruction_Memory Instruction_Memory(
 	.instr_o    ()
 );
 
-
+/*
 Data_Memory Data_Memory(
 	.clk_i		(clk_i),
-    .addr_i		(),
-    .WrData_i	(),
-    .MemWr_i	(),
-    .MemRd_i	(),
+	.rst_i 		(rst_i),
+	.addr_i		(mem_addr_o),
+	.data_i		(mem_data_o),
+	.enable_i	(mem_enable_o),
+	.write_i	(mem_write_o),
 	
-    .RdData_o	()
+	.ack_o		(mem_ack_i),
+	.data_o		(mem_data_i)
 );
+*/
 
 //data cache
 dcache_top dcache
@@ -173,8 +177,6 @@ MUX32 MUX4(
 	.data_o     ()
 );
 
-
-
 MUX32 MUX5(
     .data1_i    (MEMWB_Reg.ALUresult_o),
     .data2_i    (MEMWB_Reg.memReadData_o),
@@ -246,6 +248,7 @@ IFID_Reg IFID_Reg(
 	.flush_i			(Control.Jump_o | (Control.Branch_o & Eq.eq_o)),
 	.nextInstrAddr_i	(Add_pc_o),
     .instr_i			(Instruction_Memory.instr_o),
+    .stall_i			(dcache.p1_stall_o),
 	
 	.nextInstrAddr_o	(IFID_NxtAddr), 
     .instr_o			(instruction)
@@ -278,6 +281,7 @@ IDEX_Reg IDEX_Reg(
 	.instr25_21_i		(instruction[25:21]),
 	.instr20_16_i		(instruction[20:16]),
 	.instr15_11_i		(instruction[15:11]),
+	.stall_i			(dcache.p1_stall_o),
 	
 	.writeBack_o		(),
 	.memtoReg_o			(),
@@ -304,6 +308,7 @@ EXMEM_Reg EXMEM_Reg(
 	.ALUresult_i	(ALU.data_o),
 	.memWriteData_i	(MUX7.data_o),
 	.regDstAddr_i	(MUX3.data_o),
+	.stall_i		(dcache.p1_stall_o),
 	
 	.writeBack_o	(),
 	.memtoReg_o		(),
@@ -321,6 +326,7 @@ MEMWB_Reg MEMWB_Reg(
 	.memReadData_i	(dcache.p1_data_o),
 	.ALUresult_i	(EXMEM_Reg.ALUresult_o),
 	.regDstAddr_i	(EXMEM_Reg.regDstAddr_o),
+	.stall_i		(dcache.p1_stall_o),
 	
 	.writeBack_o	(),
 	.memtoReg_o		(),
