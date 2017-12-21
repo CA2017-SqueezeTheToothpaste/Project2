@@ -8,6 +8,7 @@ module dcache_top
 	// to Data Memory interface		
 	mem_data_i, 
 	mem_ack_i, 	
+	
 	mem_data_o, 
 	mem_addr_o, 	
 	mem_enable_o, 
@@ -18,6 +19,7 @@ module dcache_top
 	p1_addr_i, 	
 	p1_MemRead_i, 
 	p1_MemWrite_i, 
+	
 	p1_data_o, 
 	p1_stall_o
 );
@@ -66,11 +68,11 @@ wire				sram_valid;
 wire				sram_dirty;
 
 // controller
-parameter 			STATE_IDLE			  = 3'h0,
+parameter 			STATE_IDLE			= 3'h0,
 					STATE_READMISS		= 3'h1,
 					STATE_READMISSOK	= 3'h2,
 					STATE_WRITEBACK		= 3'h3,
-					STATE_MISS			  = 3'h4;
+					STATE_MISS			= 3'h4;
 reg		[2:0]		state;
 reg					mem_enable;
 reg					mem_write;
@@ -119,10 +121,13 @@ assign	cache_dirty  = write_hit;
 
 // tag comparator
 //!!! add you code here!  (hit=...?,  r_hit_data=...?)
-	
+assign hit = ((p1_tag == sram_tag) && sram_valid);
+assign r_hit_data = sram_cache_data;
+
 // read data :  256-bit to 32-bit
 always@(p1_offset or r_hit_data) begin
 	//!!! add you code here! (p1_data=...?)
+	p1_data = r_hit_data[p1_offset+31 : p1_offset];
 end
 
 
@@ -197,6 +202,7 @@ dcache_tag_sram dcache_tag_sram
 	.data_i(cache_sram_tag),
 	.enable_i(cache_sram_enable),
 	.write_i(cache_sram_write),
+	
 	.data_o(sram_cache_tag)
 );
 
@@ -210,6 +216,7 @@ dcache_data_sram dcache_data_sram
 	.data_i(cache_sram_data),
 	.enable_i(cache_sram_enable),
 	.write_i(cache_sram_write),
+	
 	.data_o(sram_cache_data)
 );
 
