@@ -76,7 +76,7 @@ parameter 			STATE_IDLE			= 3'h0,
 reg		[2:0]		state;
 reg					mem_enable;
 reg					mem_write;
-reg					cache_we;
+reg					cache_write_enable;
 wire				cache_dirty;
 reg					write_back;
 
@@ -106,7 +106,7 @@ assign	sram_dirty = sram_cache_tag[22];
 assign	sram_tag   = sram_cache_tag[21:0];
 assign	cache_sram_index  = p1_index;
 assign	cache_sram_enable = p1_req;
-assign	cache_sram_write  = cache_we | write_hit;
+assign	cache_sram_write  = cache_write_enable | write_hit;
 assign	cache_sram_tag    = {1'b1, cache_dirty, p1_tag};	
 assign	cache_sram_data   = (hit) ? w_hit_data : mem_data_i;
 
@@ -140,11 +140,11 @@ end
 // controller 
 always@(posedge clk_i or negedge rst_i) begin
 	if(~rst_i) begin
-		state      <= STATE_IDLE;
-		mem_enable <= 1'b0;
-		mem_write  <= 1'b0;
-		cache_we   <= 1'b0; 
-		write_back <= 1'b0;
+		state				<= STATE_IDLE;
+		mem_enable 			<= 1'b0;
+		mem_write			<= 1'b0;
+		cache_write_enable	<= 1'b0; 
+		write_back			<= 1'b0;
 	end
 	else begin
 		case(state)		
@@ -159,18 +159,28 @@ always@(posedge clk_i or negedge rst_i) begin
 			STATE_MISS: begin
 				if(sram_dirty) begin		//write back if dirty
 	                //!!! add you code here! 
-					mem_enable	<=	1'b1;
-					mem_write	<=	1'b1;
+					mem_enable			<=	1'b1;
+					mem_write			<=	1'b1;
+					cache_write_enable	<=	1'b0; 
+					write_back			<=	1'b1;
 					state <= STATE_WRITEBACK;
 				end
 				else begin					//write allocate: write miss = read miss + write hit; read miss = read miss + read hit
 	                //!!! add you code here! 
+					mem_enable			<=	1'b1;
+					mem_write			<=	1'b0;
+					cache_write_enable	<=	1'b0; 
+					write_back			<=	1'b0;
 					state <= STATE_READMISS;
 				end
 			end
 			STATE_READMISS: begin
 				if(mem_ack_i) begin			//wait for data memory acknowledge
 	                //!!! add you code here! 
+					mem_enable			<=	1'b0;
+					mem_write			<=	1'b0;
+					cache_write_enable	<=	1'b1; 
+					write_back			<=	1'b0;
 					state <= STATE_READMISSOK;
 				end
 				else begin
@@ -178,12 +188,20 @@ always@(posedge clk_i or negedge rst_i) begin
 				end
 			end
 			STATE_READMISSOK: begin			//wait for data memory acknowledge
-	                //!!! add you code here! 
+	            //!!! add you code here! 
+				mem_enable			<=	1'b0;
+				mem_write			<=	1'b0;
+				cache_write_enable	<=	1'b0; 
+				write_back			<=	1'b0;
 				state <= STATE_IDLE;
 			end
 			STATE_WRITEBACK: begin
 				if(mem_ack_i) begin			//wait for data memory acknowledge
 	                //!!! add you code here! 
+					mem_enable			<=	1'b1;
+					mem_write			<=	1'b0;
+					cache_write_enable	<=	1'b0; 
+					write_back			<=	1'b0;
 					state <= STATE_READMISS;
 				end
 				else begin
