@@ -44,7 +44,7 @@ PC PC(
     .rst_i      (rst_i),
     .start_i    (start_i),
     .pc_i       (MUX2.data_o),
-    ,stall_i	(dcache.p1_stall_o),
+    .stall_i	(dcache.p1_stall_o),
     .stallHold_i(HD.stallHold_o),
 	
 	.pc_o       (inst_addr)

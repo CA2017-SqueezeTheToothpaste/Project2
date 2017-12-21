@@ -127,14 +127,14 @@ assign r_hit_data = sram_cache_data;
 // read data :  256-bit to 32-bit
 always@(p1_offset or r_hit_data) begin
 	//!!! add you code here! (p1_data=...?)
-	p1_data <= r_hit_data[8*p1_offset+31 : 8*p1_offset];
+	p1_data <= r_hit_data[8'b1000*p1_offset+8'b11111 -: 8'b100000];
 end
 
 // write data :  32-bit to 256-bit
 always@(p1_offset or r_hit_data or p1_data_i) begin
 	//!!! add you code here! (w_hit_data=...?)
 	w_hit_data <= r_hit_data;
-	w_hit_data[8*p1_offset+31 : 8*p1_offset] <= p1_data_i;
+	w_hit_data[8'b1000*p1_offset+8'b11111 -: 8'b100000] <= p1_data_i;
 end
 
 // controller 

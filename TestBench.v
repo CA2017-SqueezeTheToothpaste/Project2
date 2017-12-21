@@ -88,7 +88,7 @@ initial begin
     Reset = 1;
     Start = 1;
 
-	$dumpfile("hello.vcd")
+	$dumpfile("hello.vcd");
 	$dumpvars;    
 end
   
