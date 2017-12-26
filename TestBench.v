@@ -47,7 +47,8 @@ Data_Memory Data_Memory
 
 initial begin
 	counter = 1;
-
+	$dumpfile("hello.vcd");
+	$dumpvars;  
 	// initialize pipeline registers
 	CPU.IFID_Reg.nextInstrAddr = 32'b0;
 	CPU.IFID_Reg.instr = 32'b0;
@@ -80,6 +81,10 @@ initial begin
 	CPU.MEMWB_Reg.memReadData = 32'b0;
 	CPU.MEMWB_Reg.ALUresult = 32'b0;
 	CPU.MEMWB_Reg.regDstAddr = 5'b0;
+	Data_Memory.count = 4'b0;
+	Data_Memory.write_reg = 1'b0;
+	Data_Memory.state = 2'h0;
+
 
 	
 	// initialize instruction memory (2KB)
@@ -122,8 +127,7 @@ initial begin
     Reset = 1;
     Start = 1;
 
-	$dumpfile("hello.vcd");
-	$dumpvars;    
+	  
 end
   
 always@(posedge Clk) begin
